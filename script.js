@@ -21,49 +21,114 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // ####################################################################
-    // FUNCIONALITAT DE CANVI D'IDIOMA (Placeholder amb data-attributes)
+    // MILLORA 2: NAVEGACIÓ AMB DESPLAÇAMENT SUAU (SMOOTH SCROLLING)
+    // ####################################################################
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            document.querySelector(this.getAttribute('href')).scrollIntoView({
+                behavior: 'smooth'
+            });
+        });
+    });
+
+    // ####################################################################
+    // MILLORA 3: MENÚ DE NAVEGACIÓ DINÀMIC (ACTIVE LINK)
+    // ####################################################################
+    const sections = document.querySelectorAll('section[id]');
+    const navLinks = document.querySelectorAll('.main-nav a');
+
+    function changeNav() {
+        let index = sections.length;
+
+        while(--index && window.scrollY + 50 < sections[index].offsetTop) {}
+        
+        navLinks.forEach((link) => link.classList.remove('active'));
+        // S'afegeix una comprovació per evitar errors si no es troba el link
+        const activeLink = document.querySelector(`.main-nav a[href="#${sections[index].id}"]`);
+        if (activeLink) {
+            activeLink.classList.add('active');
+        }
+    }
+
+    // Executar la funció en carregar i en desplaçar-se
+    changeNav();
+    window.addEventListener('scroll', changeNav);
+
+    // ####################################################################
+    // MILLORA 4: GUARDAR IDIOMA SELECCIONAT (localStorage)
     // ####################################################################
     const langSwitcher = document.getElementById('lang-switcher');
     
-    // Funció per actualitzar la visibilitat del contingut
     function updateLanguage(newLang) {
-        // Ocultar tots els elements amb data-lang
         document.querySelectorAll('[data-lang]').forEach(el => {
-            el.style.display = 'none';
-        });
-
-        // Mostrar elements amb l'idioma seleccionat (newLang)
-        document.querySelectorAll(`[data-lang="${newLang}"]`).forEach(el => {
-            // Utilitzem 'hidden' per als títols que no s'han de veure, però per als altres elements
-            // l'estil per defecte de l'etiqueta (block, inline, etc.) és més adequat.
-            if (el.hasAttribute('hidden')) {
+            if (el.getAttribute('data-lang') === newLang) {
                 el.removeAttribute('hidden');
-            }
-            // En cas que l'estil CSS l'hagi forçat a 'display: none', el restablim
-            el.style.display = '';
-        });
-        
-        // Assegurar que el títol de la pàgina s'actualitza
-        const titleElements = document.querySelectorAll('title');
-        titleElements.forEach(titleEl => {
-            if (titleEl.getAttribute('data-lang') === newLang) {
-                document.title = titleEl.textContent;
-                titleEl.removeAttribute('hidden');
+                // Restablir display per si estava a 'none'
+                if (el.style.display === 'none') {
+                    el.style.display = '';
+                }
             } else {
-                titleEl.setAttribute('hidden', '');
+                el.setAttribute('hidden', 'true');
             }
         });
 
-        // Actualitzar l'atribut lang de l'etiqueta <html>
+        const titleEl = document.querySelector(`title[data-lang="${newLang}"]`);
+        if (titleEl) {
+            document.title = titleEl.textContent;
+        }
+        
         document.documentElement.lang = newLang;
+        // Guardar la selecció de l'usuari
+        localStorage.setItem('preferredLanguage', newLang);
+        // Actualitzar el valor del selector
+        langSwitcher.value = newLang;
     }
 
-    // Carregar l'idioma per defecte (Català) en la primera càrrega
-    updateLanguage('ca');
+    // Obtenir l'idioma guardat o utilitzar 'ca' per defecte
+    const savedLang = localStorage.getItem('preferredLanguage') || 'ca';
+    updateLanguage(savedLang);
 
-    // Listener per al canvi de selector
     langSwitcher.addEventListener('change', (event) => {
-        const selectedLang = event.target.value;
-        updateLanguage(selectedLang);
+        updateLanguage(event.target.value);
+    });
+
+    // ####################################################################
+    // MILLORA 1: FORMULARI DE CONTACTE INTERACTIU (AJAX)
+    // ####################################################################
+    const contactForm = document.querySelector('.contact-form');
+    contactForm.addEventListener('submit', function(e) {
+        e.preventDefault(); // Prevenir la recàrrega de la pàgina
+
+        // Simular l'enviament de dades (aquí aniria una crida a un servidor real)
+        const formData = new FormData(this);
+        console.log('Dades del formulari enviades:');
+        for (let [key, value] of formData.entries()) {
+            console.log(`${key}: ${value}`);
+        }
+
+        // Mostrar un missatge de confirmació
+        const submitButton = this.querySelector('button[type="submit"]');
+        const originalButtonText = submitButton.innerHTML;
+        
+        submitButton.innerHTML = '<span data-lang="ca">Enviant...</span><span data-lang="es" hidden>Enviando...</span><span data-lang="en" hidden>Sending...</span>';
+        submitButton.disabled = true;
+
+        setTimeout(() => {
+            // Netejar el formulari
+            this.reset(); 
+            
+            // Restaurar el botó i mostrar missatge final
+            submitButton.innerHTML = '<span data-lang="ca">Enviament Correcte! ✅</span><span data-lang="es" hidden>¡Enviado Correctamente! ✅</span><span data-lang="en" hidden>Sent Successfully! ✅</span>';
+
+            // Després d'uns segons, restaurar el text original del botó
+            setTimeout(() => {
+                submitButton.innerHTML = originalButtonText;
+                submitButton.disabled = false;
+                // S'ha d'actualitzar l'idioma per si ha canviat
+                updateLanguage(localStorage.getItem('preferredLanguage') || 'ca');
+            }, 3000);
+
+        }, 1500); // Simular un retard de xarxa
     });
 });
