@@ -121,6 +121,9 @@ section {
 .logo {
     height: 100%;
     width: auto;
+    background-color: white;
+    padding: 5px;
+    border-radius: 8px;
 }
 
 .main-nav ul {
@@ -418,6 +421,9 @@ section {
     height: 60px;
     width: auto;
     margin-bottom: 5px;
+    background-color: white;
+    padding: 5px;
+    border-radius: 8px;
 }
 
 .footer-logo .tagline {
