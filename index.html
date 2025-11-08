@@ -244,7 +244,7 @@
                     <p data-lang="en" hidden>Our service promise: Maximum <strong>3 business days</strong> delivery for 95% of orders. Trust earned through execution.</p>
                 </div>
 
-                <form class="contact-form">
+                <form id="contact-form" class="contact-form">
                     <h3 data-lang="ca">Consulta Ràpida d'Assessorament Personalitzat</h3>
                     <h3 data-lang="es" hidden>Consulta Rápida de Asesoramiento Personalizado</h3>
                     <h3 data-lang="en" hidden>Quick Personalized Consulting Inquiry</h3>
@@ -254,17 +254,17 @@
                         <span data-lang="es" hidden>Nombre de la Empresa*</span>
                         <span data-lang="en" hidden>Company Name*</span>
                     </label>
-                    <input type="text" id="name" required placeholder="Ex: Construccions Segures S.L.">
+                    <input type="text" id="name" name="name" required placeholder="Ex: Construccions Segures S.L.">
                     
                     <label for="email">Correu Electrònic*</label>
-                    <input type="email" id="email" required placeholder="exemple@empresa.cat">
+                    <input type="email" id="email" name="email" required placeholder="exemple@empresa.cat">
                     
                     <label for="message">
                         <span data-lang="ca">Risc o Necessitat Clau (Breu)</span>
                         <span data-lang="es" hidden>Riesgo o Necesidad Clave (Breve)</span>
                         <span data-lang="en" hidden>Key Risk or Need (Brief)</span>
                     </label>
-                    <textarea id="message" rows="4" placeholder="Ex: Necessito EPIs per a treball en alçada i resistència al tall."></textarea>
+                    <textarea id="message" name="message" rows="4" placeholder="Ex: Necessito EPIs per a treball en alçada i resistència al tall."></textarea>
                     
                     <button type="submit" class="cta-button primary-cta">
                         <span data-lang="ca">Rebre Assessorament en 24h</span>
@@ -276,6 +276,7 @@
                         <span data-lang="es" hidden>Solo pedimos la información esencial. El 80% de los clientes formalizan pedido después de recibirlo.</span>
                         <span data-lang="en" hidden>We only ask for essential information. 80% of clients formalize orders after receiving it.</span>
                     </p>
+                    <div id="form-feedback" style="display: none; margin-top: 1rem; padding: 1rem; border-radius: 5px; text-align: center;"></div>
                 </form>
             </div>
         </section>
@@ -338,6 +339,7 @@
         </div>
     </footer>
 
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
